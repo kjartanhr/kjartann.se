@@ -3,6 +3,8 @@ import { merge_req_params, parse_request } from "@/lib/http.ts";
 import * as log from "@std/log";
 import not_found_handler from "@/routes/404.ts";
 import { generate_stack_page } from "@/lib/error.ts";
+import * as path from "path";
+import * as mime from "@std/media-types";
 
 log.setup({
     handlers: {
@@ -52,9 +54,42 @@ const main = async (env: string | undefined) => {
                     route.handler.default(merge_req_params(req, route.params)),
                 );
                 conn.write(data);
-            } else {
-                conn.write(not_found_handler(req));
+                conn.closeWrite();
+
+                continue;
             }
+
+            const file_path = path.join(Deno.cwd(), "public", req.pathname);
+            let file: Deno.FileInfo | undefined;
+            try {
+                file = await Deno.stat(file_path);
+            } catch {
+                file = undefined;
+            }
+            if (file && file.isFile) {
+                const file_data = await Deno.readFile(file_path);
+                const split_by_period = req.pathname.split(".");
+                const extension = `.${
+                    split_by_period[split_by_period.length - 1]
+                }`;
+                const content_type = mime.contentType(extension);
+
+                if (content_type) {
+                    conn.write(req.respond({
+                        status: 200,
+                        headers: {
+                            content_type,
+                        },
+                        body: file_data,
+                    }));
+                    conn.closeWrite();
+                }
+
+                continue;
+            }
+
+            conn.write(not_found_handler(req));
+            conn.closeWrite();
         } catch (e) {
             console.error(e);
 
@@ -66,9 +101,9 @@ const main = async (env: string | undefined) => {
             } else {
                 conn.write(req.respond({ status: 500 }));
             }
-        }
 
-        conn.closeWrite();
+            conn.closeWrite();
+        }
     }
 };
 

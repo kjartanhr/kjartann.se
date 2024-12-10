@@ -7,6 +7,7 @@
     "@std/html": "jsr:@std/html@^1.0.3",
     "@std/http": "jsr:@std/http@^1.0.12",
     "@std/log": "jsr:@std/log@^0.224.11",
+    "@std/media-types": "jsr:@std/media-types@^1.1.0",
     "@std/uuid": "jsr:@std/uuid@1",
     "@vento/vento": "jsr:@vento/vento@^1.12.12",
     "path": "jsr:@std/path@1",

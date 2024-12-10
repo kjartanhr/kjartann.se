@@ -7,6 +7,12 @@ const HTTP_1_1_HEADER_DELIM = ": ";
 const HTTP_1_1_COOKIE_DELIM = ";";
 const HTTP_1_1_COOKIE_VALUE_DELIM = "=";
 const CARRIAGE_RETURN_STR = "\r";
+const ILLEGAL_RE = /[\?<>\\:\*\|"]/g;
+// deno-lint-ignore no-control-regex
+const CONTROL_RE = /[\x00-\x1f\x80-\x9f]/g;
+const RESERVED_RE = /^\.+$/;
+const WIN_RESERVED_RE = /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
+const WIN_TRAILING_RE = /[\. ]+$/;
 
 const format_header = (header: string) => {
     const capitalize = (word: string) => {
@@ -31,6 +37,15 @@ const format_header = (header: string) => {
     return return_str;
 };
 
+const sanitise_pathname = (pathname: string) => {
+    return pathname
+        .replace(ILLEGAL_RE, "")
+        .replace(CONTROL_RE, "")
+        .replace(RESERVED_RE, "")
+        .replace(WIN_RESERVED_RE, "")
+        .replace(WIN_TRAILING_RE, "");
+};
+
 const encoder = new TextEncoder();
 
 export type T_Http_Request = {
@@ -45,7 +60,7 @@ export type T_Http_Request = {
         opts: {
             status: StatusCode;
             headers?: { [key: string]: string };
-            body?: string;
+            body?: string | Uint8Array;
         },
     ) => Uint8Array;
 };
@@ -60,7 +75,7 @@ export const parse_request = (
 
     const start_line = lines[0].replace("\r", "").split(" ");
     const method = start_line[0];
-    const pathname = start_line[1];
+    const pathname = sanitise_pathname(start_line[1]);
     const version = start_line[2];
 
     const cookies: { [key: string]: string } = {};
@@ -184,7 +199,7 @@ export const parse_request = (
             opts: {
                 status: StatusCode;
                 headers?: { [key: string]: string };
-                body?: string;
+                body?: string | Uint8Array;
             },
         ) => {
             opts.headers = {
@@ -203,11 +218,23 @@ export const parse_request = (
                 res += `${value}\n`;
             }
 
+            let res_bytes = encoder.encode(res);
+
             if (opts.body) {
-                res += `\n${opts.body}`;
+                let body_bytes: Uint8Array | undefined;
+                if (typeof opts.body === "string") {
+                    body_bytes = encoder.encode(`\n${opts.body}`);
+                } else {
+                    body_bytes = new Uint8Array([
+                        ...encoder.encode("\n"),
+                        ...opts.body,
+                    ]);
+                }
+
+                res_bytes = new Uint8Array([...res_bytes, ...body_bytes]);
             }
 
-            return encoder.encode(res);
+            return res_bytes;
         },
     };
 };
