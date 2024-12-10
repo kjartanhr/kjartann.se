@@ -7,6 +7,8 @@ export type T_Route_Handler = {
 };
 type T_Route_Handlers = { [key: string]: T_Route_Handler };
 
+export type T_Route = ReturnType<typeof find_route>;
+
 const find_route = (
     query: string,
     route_keys: string[],

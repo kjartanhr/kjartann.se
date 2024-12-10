@@ -1,5 +1,5 @@
-import { import_routes } from "@/lib/routes.ts";
-import { merge_req_params, parse_request } from "@/lib/http.ts";
+import { import_routes, T_Route } from "@/lib/routes.ts";
+import { merge_req_params, parse_request, T_Http_Request } from "@/lib/http.ts";
 import * as log from "@std/log";
 import not_found_handler from "@/routes/404.ts";
 import { generate_stack_page } from "@/lib/error.ts";
@@ -27,6 +27,55 @@ const safe_close = (conn: Deno.TcpConn) => {
     }
 };
 
+const safe_write = (conn: Deno.TcpConn, data: Uint8Array) => {
+    conn.write(data);
+    conn.closeWrite();
+};
+
+const handle_routing = async (
+    conn: Deno.TcpConn,
+    req: T_Http_Request,
+    route: T_Route,
+) => {
+    if (route) {
+        const data = await Promise.resolve(
+            route.handler.default(merge_req_params(req, route.params)),
+        );
+        return safe_write(conn, data);
+    }
+
+    const file_path = path.join(Deno.cwd(), "public", req.pathname);
+    let file: Deno.FileInfo | undefined;
+    try {
+        file = await Deno.stat(file_path);
+    } catch {
+        file = undefined;
+    }
+    if (file && file.isFile) {
+        const file_data = await Deno.readFile(file_path);
+        const split_by_period = req.pathname.split(".");
+        const extension = `.${split_by_period[split_by_period.length - 1]}`;
+        const content_type = mime.contentType(extension);
+
+        if (!content_type) {
+            return safe_write(conn, not_found_handler(req));
+        }
+
+        return safe_write(
+            conn,
+            req.respond({
+                status: 200,
+                headers: {
+                    content_type,
+                },
+                body: file_data,
+            }),
+        );
+    }
+
+    return safe_write(conn, not_found_handler(req));
+};
+
 const main = async (env: string | undefined) => {
     const { find_route } = await import_routes("./routes");
 
@@ -46,63 +95,24 @@ const main = async (env: string | undefined) => {
         const req_first_text = decoder.decode(req_first_bytes.value);
         const req = parse_request(req_first_text, req_first_bytes.value);
 
-        const route = find_route(req.pathname);
-
         try {
-            if (route) {
-                const data = await Promise.resolve(
-                    route.handler.default(merge_req_params(req, route.params)),
-                );
-                conn.write(data);
-                conn.closeWrite();
-
-                continue;
-            }
-
-            const file_path = path.join(Deno.cwd(), "public", req.pathname);
-            let file: Deno.FileInfo | undefined;
-            try {
-                file = await Deno.stat(file_path);
-            } catch {
-                file = undefined;
-            }
-            if (file && file.isFile) {
-                const file_data = await Deno.readFile(file_path);
-                const split_by_period = req.pathname.split(".");
-                const extension = `.${
-                    split_by_period[split_by_period.length - 1]
-                }`;
-                const content_type = mime.contentType(extension);
-
-                if (content_type) {
-                    conn.write(req.respond({
-                        status: 200,
-                        headers: {
-                            content_type,
-                        },
-                        body: file_data,
-                    }));
-                    conn.closeWrite();
-                }
-
-                continue;
-            }
-
-            conn.write(not_found_handler(req));
-            conn.closeWrite();
+            handle_routing(conn, req, find_route(req.pathname));
         } catch (e) {
             console.error(e);
 
-            if (!env || env.toLowerCase() !== "PRODUCTION") {
-                conn.write(req.respond({
-                    status: 500,
-                    body: generate_stack_page(e),
-                }));
-            } else {
-                conn.write(req.respond({ status: 500 }));
+            if (env && env.toLowerCase() === "PRODUCTION") {
+                safe_write(conn, req.respond({ status: 500 }));
+
+                continue;
             }
 
-            conn.closeWrite();
+            safe_write(
+                conn,
+                req.respond({
+                    status: 500,
+                    body: generate_stack_page(e),
+                }),
+            );
         }
     }
 };
