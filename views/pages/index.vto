@@ -1,11 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>{{it.title}}</title>
-    </head>
-    <body>
-        <h1>{{it.title}}</h1>
-    </body>
-</html>
+{{ layout "views/layout/wrapper.vto" }}
+<h1>{{it.title}}</h1>
+
+<form action="/" method="POST">
+    <input type="text" name="test" />
+    <button type="submit">Submit form</button>
+</form>
+
+{{ if it.submitted }}
+    <p><strong>Submitted data:</strong></p>
+    <pre style="font-family: monospace;">
+{{ it.submitted }}
+    </pre>
+{{ /if }}
+
+{{ /layout }}

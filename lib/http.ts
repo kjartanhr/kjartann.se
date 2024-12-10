@@ -39,12 +39,13 @@ export type T_Http_Request = {
     pathname: string;
     version: string;
     cookies: { [key: string]: string };
-    headers: { [key: string]: string };
+    headers: { [key: string]: string | number };
+    body: { bytes: Uint8Array; text?: string; parsed?: object } | null;
     respond: (
         opts: {
             status: StatusCode;
             headers?: { [key: string]: string };
-            body: string;
+            body?: string;
         },
     ) => Uint8Array;
 };
@@ -53,6 +54,7 @@ export type T_Http_Response = Uint8Array;
 
 export const parse_request = (
     req_text: string,
+    req_bytes: Uint8Array,
 ): T_Http_Request => {
     const lines = req_text.split("\n");
 
@@ -62,13 +64,10 @@ export const parse_request = (
     const version = start_line[2];
 
     const cookies: { [key: string]: string } = {};
-    const headers: { [key: string]: string } = {};
+    const headers: { [key: string]: string | number } = {};
 
     for (let i = 1; i < lines.length; i++) {
         const curr_line = lines[i];
-        if (curr_line.trim() === "" || curr_line === CARRIAGE_RETURN_STR) {
-            continue;
-        }
 
         const curr_header = curr_line.split(HTTP_1_1_HEADER_DELIM);
         if (curr_header.length < 2) {
@@ -111,6 +110,16 @@ export const parse_request = (
                 break;
             }
 
+            case "content_length": {
+                headers["content_length"] = Number(
+                    curr_line.substring(
+                        curr_header_name.length + HTTP_1_1_HEADER_DELIM.length,
+                        header_line_end_index,
+                    ),
+                );
+                break;
+            }
+
             default: {
                 headers[curr_header_name] = curr_line.substring(
                     curr_header_name.length + HTTP_1_1_HEADER_DELIM.length,
@@ -119,6 +128,45 @@ export const parse_request = (
 
                 break;
             }
+        }
+    }
+
+    let body: T_Http_Request["body"] = null;
+    if (typeof headers.content_length === "number") {
+        const body_bytes = req_bytes.slice(
+            req_bytes.length - headers.content_length,
+        );
+
+        body = { bytes: body_bytes };
+        try {
+            body.text = new TextDecoder().decode(body_bytes);
+        } catch {
+            // nothing
+        }
+    }
+
+    if (body?.text && headers.content_type) {
+        switch (headers.content_type) {
+            case "application/json": {
+                try {
+                    body.parsed = JSON.parse(body.text);
+                } catch {
+                    // nothing
+                }
+
+                break;
+            }
+
+            case "application/x-www-form-urlencoded":
+                try {
+                    body.parsed = Object.fromEntries(
+                        new URLSearchParams(body.text),
+                    );
+                } catch {
+                    // nothing
+                }
+
+                break;
         }
     }
 
@@ -131,15 +179,16 @@ export const parse_request = (
         version,
         cookies,
         headers,
+        body,
         respond: (
             opts: {
                 status: StatusCode;
                 headers?: { [key: string]: string };
-                body: string;
+                body?: string;
             },
         ) => {
             opts.headers = {
-                server: "pornhub",
+                server: "catboy",
                 x_request_id: rid,
                 ...opts.headers,
             };
