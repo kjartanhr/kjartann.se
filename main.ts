@@ -55,10 +55,10 @@ const handle_routing = async (
         const file_data = await Deno.readFile(file_path);
         const split_by_period = req.pathname.split(".");
         const extension = `.${split_by_period[split_by_period.length - 1]}`;
-        const content_type = mime.contentType(extension);
 
+        let content_type = mime.contentType(extension);
         if (!content_type) {
-            return safe_write(conn, not_found_handler(req));
+            content_type = "application/octet-stream";
         }
 
         return safe_write(
