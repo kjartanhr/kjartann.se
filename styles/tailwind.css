@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.delay-100 {
+    animation-delay: 100ms;
+}
+
+.delay-250 {
+    animation-delay: 250ms;
+}
+
+.delay-450 {
+    animation-delay: 450ms;
+}
+
+.delay-650 {
+    animation-delay: 650ms;
+}
+
+.delay-850 {
+    animation-delay: 850ms;
+}
+
+.animate-spin-fast {
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+::selection {
+    background: rgba(255, 255, 255, 0.3);
+}

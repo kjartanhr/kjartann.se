@@ -3,9 +3,88 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" type="text/css" href="/static/css/tw.min.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/animate.min.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
         <title>{{ it.title }}</title>
+
+        <meta name="title" content="{{ it.seo_title }}" />
+        <meta name="description" content="Ég er reyndur og ákafur framenda vefforritari frá Reykjavík, Íslandi." />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://kjartann.is/is" />
+        <meta property="og:title" content="{{ it.seo_title }}" />
+        <meta property="og:description" content="Ég er reyndur og ákafur framenda vefforritari frá Reykjavík, Íslandi." />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://kjartann.is/is" />
+        <meta property="twitter:title" content="{{ it.seo_title }}" />
+        <meta property="twitter:description" content="Ég er reyndur og ákafur framenda vefforritari frá Reykjavík, Íslandi." />
+
+        <meta name="theme-color" content="#dc2626" />
+
+        <link rel="icon" type="image/png" href="/img/flags/eu.png" />
+
+        <link rel="canonical" href="https://kjartann.is{{ it.pathname }}" />
     </head>
     <body>
-        {{ content }}
+        <div class="min-h-screen bg-gray-900 flex flex-col">
+            <div class="py-8">
+                <div class="max-w-screen-2xl mx-auto px-8">
+                    <div class="flex justify-end pb-6 gap-2">
+                        <a href="/en"><img class="h-6 w-6" src="/static/img/flags/eu.svg" /></a>
+                        <a class="cursor-not-allowed"><img class="h-6 w-6 opacity-50" src="/static/img/flags/is.svg" /></a>
+                    </div>
+                    <div class="flex flex-col md:flex-row md:items-center gap-2">
+                        <div class="flex flex-grow-0 md:flex-grow">
+                            <a href="/is" class="text-2xl text-gray-200 transition duration-50 ease hover:text-white">Kjartan Hrafnkelsson</a>
+                            <div class="flex-grow"></div>
+                            <button class="block sm:hidden focus:outline-none">
+                                <!--{ (menu === false) ?--> <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg><!-- : -->
+                                <!-- <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"/></svg>} -->
+                            </button>
+                        </div>
+                        
+                        <div class="flex sm:flex flex-col sm:flex-row gap-1 sm:gap-8">
+                            <a 
+                                href="/is/um"
+                                class="text-lg py-2 text-gray-200 transition duration-50 ease transform hover:-translate-y-0.5 hover:text-gray-100 block font-medium"
+                            >
+                                <span class="font-normal">this</span>.um();
+                            </a>
+                            <a
+                                href="/is/verkefni"
+                                class="text-lg py-2 text-gray-200 transition duration-50 ease transform hover:-translate-y-0.5 hover:text-gray-100 block font-medium"
+                            >
+                                <span class="font-normal">this</span>.verkefni();
+                            </a>
+                            <a
+                                href="/is/samband"
+                                class="text-lg text-gray-200 shadow bg-red-600 py-2 px-5 transition duration-50 ease transform hover:-translate-y-0.5 hover:opacity-80 block font-medium"
+                            >
+                                <span class="font-normal">this</span>.samband();
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-grow">
+                {{ content }}
+            </div>
+
+            <div class="w-full">
+                <div class="max-w-screen-2xl mx-auto px-8 py-16">
+                    <div class="flex flex-col xs:flex-row justify-between gap-1">
+                        <p class="text-xs text-gray-700">&copy; 2021 &mdash; {{ it.now.getUTCFullYear() }} Kjartan Hrafnkelsson</p>
+                        <Link href="/is/impressum"><a class="text-xs text-gray-700 underline">Áletrun</a></Link>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

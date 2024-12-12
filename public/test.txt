@@ -1,1 +1,0 @@
-the static file handling works

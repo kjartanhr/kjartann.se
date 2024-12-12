@@ -1,0 +1,45 @@
+# AS51019 Peering Policy
+
+## Scope
+
+This peering policy applies for requests for peering to AS51019.
+
+We will not ask other networks to adhere to this peering policy
+if the request for peering is sent from us, and/or if we benefit
+more from the intereconnection.
+
+## Filtering
+
+1. We will filter for netmasks:
+
+   - Equal to or larger than /8 on IPv4
+   - Equal to or less than /24 on IPv4
+   - Equal to or larger than /12 on IPv6
+   - Equal to or less than /48 on IPv6
+
+2. We will drop RPKI-invalid prefixes
+
+3. We will apply a maximum route limit based on information from
+   PeeringDB. If it is not available a limit with generous head-
+   room will be set based on prefix count data after the peering
+   is established.
+
+4. We will only accept prefixes that are publicly routable
+   unicast space (drop RFC1918 and others).
+
+## Peering preferences
+
+Please peer with us on both IPv6 and IPv4 when available. Even if
+you do not send IPv4/IPv6 routes we may, and you may in the
+future.
+
+Please establish peering sessions on all mutual IXPs for a given
+point of presence, for redundancy.
+
+Only send traffic to us destined to prefixes announced from 51019
+or a downstream of 51019 (no default route).
+
+## Recommendations
+
+We apply BGP local preference to routes received over IXPs who
+cost less or PNI, we recommend you do this as well.

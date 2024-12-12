@@ -1,0 +1,1 @@
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOOosb9EHgPyOsPF4efZb+6e+Ljl+3d5FviSzMeNTXoB kjartann@kjartann.is

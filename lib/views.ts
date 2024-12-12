@@ -9,7 +9,10 @@ export const render = async (
 ) => {
     const result = await vento.run(
         path.join(Deno.cwd(), "views", template),
-        data,
+        {
+            ...data,
+            now: new Date(),
+        },
     );
 
     return result.content;

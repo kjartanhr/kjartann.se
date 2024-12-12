@@ -1,0 +1,13 @@
+{
+    "$schema": "https://deno.land/x/denon@2.5.0/schema.json",
+    "scripts": {
+        "start": {
+            "cmd": "deno run -A main.ts",
+            "desc": "Run application with all permissions"
+        }
+    },
+    "watcher": {
+        "exts": ["ts", "tsx", "vto"],
+        "match": ["**/*.*"]
+    }
+}

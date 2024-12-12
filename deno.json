@@ -1,19 +1,22 @@
 {
-  "tasks": {
-    "dev": "deno run --watch main.ts"
-  },
-  "imports": {
-    "@std/assert": "jsr:@std/assert@1",
-    "@std/html": "jsr:@std/html@^1.0.3",
-    "@std/http": "jsr:@std/http@^1.0.12",
-    "@std/log": "jsr:@std/log@^0.224.11",
-    "@std/media-types": "jsr:@std/media-types@^1.1.0",
-    "@std/uuid": "jsr:@std/uuid@1",
-    "@vento/vento": "jsr:@vento/vento@^1.12.12",
-    "path": "jsr:@std/path@1",
-    "@/": "./"
-  },
-  "fmt": {
-    "indentWidth": 4
-  }
+    "tasks": {
+        "start-dev": "denon start",
+        "start-tw": "deno run -A npm:tailwindcss -i ./styles/tailwind.css -o ./public/static/css/tw.min.css --watch",
+        "dev": "deno task start-dev & deno task start-tw"
+    },
+    "imports": {
+        "@std/assert": "jsr:@std/assert@1",
+        "@std/html": "jsr:@std/html@^1.0.3",
+        "@std/http": "jsr:@std/http@^1.0.12",
+        "@std/log": "jsr:@std/log@^0.224.11",
+        "@std/media-types": "jsr:@std/media-types@^1.1.0",
+        "@std/uuid": "jsr:@std/uuid@1",
+        "@vento/vento": "jsr:@vento/vento@^1.12.12",
+        "path": "jsr:@std/path@1",
+        "tailwindcss": "npm:tailwindcss@^3.4.16",
+        "@/": "./"
+    },
+    "fmt": {
+        "indentWidth": 4
+    }
 }

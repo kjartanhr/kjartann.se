@@ -1,18 +1,20 @@
 {{ layout "views/layout/wrapper.vto" }}
-<h1>{{it.title}}</h1>
 
-<form action="/" method="POST">
-    <input type="text" name="test" />
-    <button type="submit">Submit form</button>
-</form>
-
-{{ if it.submitted }}
-    <p><strong>Submitted data:</strong></p>
-    <pre style="font-family: monospace;">
-{{ it.submitted }}
-    </pre>
-{{ /if }}
-
-<img src="/ssr.png" alt="Skátasamband Reykjavíkur" height="60" style="margin-top:44px;" />
+<div class="flex flex-grow items-center">
+    <div class="w-full">
+        <div class="max-w-screen-2xl mx-auto px-8">
+            <div class="flex flex-col gap-4 md:gap-8">
+                <div class="flex flex-col gap-5 animate__animated animate__fadeInUp">
+                    <h1 class="text-4xl sm:text-5xl font-bold text-white">Halló, ég er Kjartan</h1>
+                    <h2 class="text-lg sm:text-2xl font-normal text-gray-200">Reyndur & ákafur framendaforritari.</h2>
+                </div>
+                <div class="flex flex-col 2xs:flex-row gap-2 sm:gap-4 md:gap-6">
+                    <a href="/is/verkefni" class="animate__animated animate__fadeInUp delay-250"><span class="text-base sm:text-lg shadow bg-red-600 py-3 px-6 sm:px-8 text-white transition duration-50 ease transform hover:-translate-y-0.5 hover:opacity-80 block font-medium cursor-pointer">Verkefni</span></a>
+                    <a href="/is/um" class="animate__animated animate__fadeInUp delay-450"><span class="text-base sm:text-lg shadow bg-white py-3 px-6 sm:px-8 text-black transition duration-50 ease transform hover:-translate-y-0.5 hover:opacity-80 block font-medium cursor-pointer whitespace-nowrap">Um mig</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {{ /layout }}
