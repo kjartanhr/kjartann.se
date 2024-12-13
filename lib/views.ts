@@ -5,7 +5,7 @@ const vento = Vento();
 
 export const render = async (
     template: string,
-    data: Record<string, unknown>,
+    data?: Record<string, unknown>,
 ) => {
     const result = await vento.run(
         path.join(Deno.cwd(), "views", template),

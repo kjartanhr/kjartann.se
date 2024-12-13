@@ -11,7 +11,7 @@ export default async function handler(
                 headers: {
                     content_type: "text/html",
                 },
-                body: await render("pages/index.vto", { title: "Heim" }),
+                body: await render("pages/um.vto", { title: "Um" }),
             });
         }
 

@@ -57,7 +57,7 @@ const handle_routing = async (
         );
     }
 
-    return await safe_write(conn, not_found_handler(req));
+    return await safe_write(conn, await not_found_handler(req));
 };
 
 const handle_conn_err = (e: Intentional_Any) => {

@@ -1,0 +1,56 @@
+{{ layout "views/layout/wrapper.vto" }}
+
+<div class="w-full pt-24">
+    <div class="max-w-screen-2xl mx-auto px-8">
+        <div class="animate__animated animate__fadeInUp">
+            <h1 class="text-4xl font-bold text-white">Um mig</h1>
+        </div>
+        <div class="max-w-screen-sm pt-5">
+            <div class="animate__animated animate__fadeIn delay-450 flex flex-col gap-4">
+                <p class="text-gray-200 text-lg">Hæ, ég er framendaforritari frá Reykjavík með rúmlega 8 ár af reynslu á því sviði og mikinn áhuga á opnum hugbúnaði.</p>
+                <p class="text-gray-200 text-lg">Ég kalla mig sjálfann framendaforritara en ég einbeiti mér frekar að hönnunarsviði vefforritunarinnar og eru því flest verkefni mín miðjuð í kringum hana. Þó kann ég ýmislegt og vinn stundum við bakendaforritun að auki framendavinnunar minnar, en sprotafyrirtækið <a href="https://dev-live.bokar.is" class="text-white underline" target="_blank" rel="noreferrer">Bókar</a> er nýjasta verk mitt á þessu sviði.</p>
+                <p class="text-gray-200 text-lg">Eftirfarandi tækni nota ég reiprennandi við vinnu mína og hef öðlast töluverða reynslu í notkun þeirra allra:</p>
+                <ul class="list-disc ml-6 text-gray-200 text-lg">
+                    <li>JavaScript
+                        <ul class="list-disc ml-6 text-gray-200 text-lg">
+                            <li>TypeScript</li>
+                            <li><a href="https://react.dev" class="text-white underline" target="_blank" rel="noreferrer">React</a></li>
+                            <li><a href="https://nextjs.org" class="text-white underline" target="_blank" rel="noreferrer">Next.js</a> (full-stack)</li>
+                            <li><a href="https://prisma.io" class="text-white underline" target="_blank" rel="noreferrer">Prisma</a></li>
+                            <li><a href="https://expressjs.com" class="text-white underline" target="_blank" rel="noreferrer">Express</a></li>
+                        </ul>
+                    </li>
+                    <li>CSS
+                        <ul class="list-disc ml-6 text-gray-200 text-lg">
+                            <li><a href="https://tailwindcss.com" class="text-white underline" target="_blank" rel="noreferrer">Tailwind</a></li>
+                        </ul>
+                    </li>
+                    <li>Python</li>
+                    <li><a href="https://redis.io" class="text-white underline" target="_blank" rel="noreferrer">Redis</a></li>
+                </ul>
+                <p class="text-gray-200 text-lg">Auk þessa vinn ég mikið með eftirfarandi en hef ekki öðlast jafn góðann skilning á þeim:</p>
+                <ul class="list-disc ml-6 text-gray-200 text-lg">
+                    <li>MySQL / MariaDB / SQLite</li>
+                    <li>MongoDB</li>
+                </ul>
+                <h1 class="text-2xl font-bold text-white">Tilraunir með BGP</h1>
+                <p class="text-gray-200 text-lg">Nýlega hef ég byrjað að fikta í BGP (Border Gateway Protocol), en það er tækni sem megnið af internetinu byggir á til að framkvæma netleiðsögn svokallaða. Að leika sér með þetta samanstendur af eftirfarandi:</p>
+                <ul class="list-disc ml-6 text-gray-200 text-lg">
+                    <li>Finna sér "IP flutning" frá þriðja aðila (þ.e. annað orð yfir nettengingu)</li>
+                    <li>Fá AS númer skráð</li>
+                    <li>Setja upp tenginguna, en það er gert með uppsetningu á "BGP session" við netveitenda</li>
+                </ul>
+                <p class="text-gray-200 text-lg">Netið mitt er rekið undir númerinu <a href="https://bgp.tools/as/51019" class="text-white underline" target="_blank" rel="noreferrer">AS51019</a>, en þetta veitir mér IPv6 tengingu heima í gegnum göng frá Frakfúrt. Í Frankfúrt er ég einnig með einhver kerfi í aukahlutverki.</p>
+                <p class="text-gray-200 text-lg">Nýjasta þróunin í sögu AS51019 eru internet samtengipunktarnir í Frankfúrt sem ég hef tengst en þeir eru:</p>
+                <ul class="list-disc ml-6 text-gray-200 text-lg">
+                    <li>NL-ix</li>
+                    <li>LocIX</li>
+                    <li>FogIXP</li>
+                </ul>
+                <p class="text-gray-200 text-lg">Ásamt þeim eru nokkrir aðrir annarstaðar í heiminum sem ég hef tengst en þetta varð að því að ég rek tæknilega séð best tengda BGP netið á Íslandi skv. <a href="https://bgp.tools/rankings/IS" class="text-white underline" target="_blank" rel="noreferrer">bgp.tools</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ /layout }}
