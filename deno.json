@@ -11,7 +11,9 @@
         "@std/log": "jsr:@std/log@^0.224.11",
         "@std/media-types": "jsr:@std/media-types@^1.1.0",
         "@std/uuid": "jsr:@std/uuid@1",
+        "@types/html-minifier": "npm:@types/html-minifier@^4.0.5",
         "@vento/vento": "jsr:@vento/vento@^1.12.12",
+        "html-minifier": "npm:html-minifier@^4.0.0",
         "path": "jsr:@std/path@1",
         "tailwindcss": "npm:tailwindcss@^3.4.16",
         "@/": "./"

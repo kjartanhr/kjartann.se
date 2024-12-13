@@ -1,4 +1,6 @@
 import * as path from "path";
+// @deno-types="@types/html-minifier"
+import { minify } from "html-minifier";
 import Vento from "@vento/vento";
 
 const vento = Vento();
@@ -15,5 +17,8 @@ export const render = async (
         },
     );
 
-    return result.content;
+    return minify(result.content, {
+        removeComments: false,
+        collapseWhitespace: true,
+    });
 };
