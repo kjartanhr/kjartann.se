@@ -248,7 +248,7 @@ export const parse_request = (
                     safe_write(
                         conn,
                         encoder.encode(
-                            "HTTP/1.1 411 Length Required\r\nServer: catboy",
+                            "HTTP/1.1 411 Length Required\r\nServer: catboy-maid",
                         ),
                     );
                     safe_close(conn);
@@ -346,7 +346,7 @@ export const parse_request = (
             },
         ) => {
             opts.headers = {
-                server: "catboy",
+                server: "catboy-maid",
                 x_request_id: rid,
                 ...opts.headers,
             };
