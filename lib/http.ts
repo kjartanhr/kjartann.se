@@ -104,7 +104,7 @@ export const parse_request = (
     const headers: { [key: string]: string } = {};
     const body_bytes_stored_with_bad_practice: number[] = [];
 
-    byte_loop: for (let i = 0; i < chunk.byteLength; i++) {
+    http_fsm: for (let i = 0; i < chunk.byteLength; i++) {
         const char = chunk[i];
 
         switch (state) {
@@ -253,7 +253,7 @@ export const parse_request = (
                     );
                     safe_close(conn);
 
-                    break byte_loop;
+                    break http_fsm;
                 }
 
                 if (IS_BODY_BEGINNING) {
