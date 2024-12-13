@@ -2,11 +2,29 @@ import { v1 as uuidv1 } from "@std/uuid";
 import { STATUS_TEXT } from "@std/http/status";
 import type { StatusCode } from "@std/http/status";
 import type { T_Route_Request } from "@/types/routes.ts";
+import { safe_close, safe_write } from "@/lib/tcp.ts";
+import {
+    CHAR_COLON,
+    CHAR_CR,
+    CHAR_H,
+    CHAR_HYPHEN,
+    CHAR_LF,
+    CHAR_P,
+    CHAR_PERIOD,
+    CHAR_SLASH,
+    CHAR_SPACE,
+    CHAR_T,
+    LOOKUP_LOWER,
+    LOOKUP_NORMAL,
+    LOOKUP_UPPER,
+} from "@/lib/ascii.ts";
+
+const decoder = new TextDecoder();
+const encoder = new TextEncoder();
 
 const HTTP_1_1_HEADER_DELIM = ": ";
 const HTTP_1_1_COOKIE_DELIM = ";";
 const HTTP_1_1_COOKIE_VALUE_DELIM = "=";
-const CARRIAGE_RETURN_STR = "\r";
 const ILLEGAL_RE = /[\?<>\\:\*\|"]/g;
 // deno-lint-ignore no-control-regex
 const CONTROL_RE = /[\x00-\x1f\x80-\x9f]/g;
@@ -14,7 +32,7 @@ const RESERVED_RE = /^\.+$/;
 const WIN_RESERVED_RE = /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
 const WIN_TRAILING_RE = /[\. ]+$/;
 
-const format_header = (header: string) => {
+export const format_header = (header: string) => {
     const capitalize = (word: string) => {
         return word.charAt(0).toUpperCase() + word.substring(1);
     };
@@ -46,16 +64,19 @@ const sanitise_pathname = (pathname: string) => {
         .replace(WIN_TRAILING_RE, "");
 };
 
-const encoder = new TextEncoder();
-
 export type T_Http_Request = {
     id: string;
     method: string;
     pathname: string;
-    version: string;
+    version: {
+        major: string;
+        minor: string;
+    };
     cookies: { [key: string]: string };
     headers: { [key: string]: string | number };
-    body: { bytes: Uint8Array; text?: string; parsed?: object } | null;
+    body:
+        | { bytes: Uint8Array; text: string | null; parsed: object | null }
+        | null;
     respond: (
         opts: {
             status: StatusCode;
@@ -68,103 +89,197 @@ export type T_Http_Request = {
 export type T_Http_Response = Uint8Array;
 
 export const parse_request = (
-    req_text: string,
-    req_bytes: Uint8Array,
+    chunk: Uint8Array,
+    conn: Deno.TcpConn,
 ): T_Http_Request => {
-    const lines = req_text.split("\n");
+    let state = "STATE_METHOD";
+    let version_minor = "";
+    let version_major = "";
+    let method = "";
+    let pathname = "";
+    let curr_header_key = "";
+    let curr_header_value = "";
+    let body_offset = 0;
 
-    const start_line = lines[0].replace("\r", "").split(" ");
-    const method = start_line[0];
-    const pathname = sanitise_pathname(start_line[1]);
-    const version = start_line[2];
+    const headers: { [key: string]: string } = {};
+    const body_bytes_stored_with_bad_practice: number[] = [];
 
-    const cookies: { [key: string]: string } = {};
-    const headers: { [key: string]: string | number } = {};
+    byte_loop: for (let i = 0; i < chunk.byteLength; i++) {
+        const char = chunk[i];
 
-    for (let i = 1; i < lines.length; i++) {
-        const curr_line = lines[i];
+        switch (state) {
+            case "STATE_METHOD": {
+                if (char === CHAR_SPACE) {
+                    state = "STATE_PATH";
 
-        const curr_header = curr_line.split(HTTP_1_1_HEADER_DELIM);
-        if (curr_header.length < 2) {
-            continue;
-        }
-
-        const curr_header_name = curr_header[0].toLowerCase().replaceAll(
-            "-",
-            "_",
-        );
-
-        let header_line_end_index = curr_line.length;
-        if (curr_line.endsWith(CARRIAGE_RETURN_STR)) {
-            header_line_end_index = curr_line.length -
-                CARRIAGE_RETURN_STR.length;
-        }
-
-        switch (curr_header_name) {
-            case "cookie": {
-                const cookie_string = curr_line.substring(
-                    curr_header_name.length + HTTP_1_1_HEADER_DELIM.length,
-                    header_line_end_index,
-                );
-
-                const cookie_entries = cookie_string.split(
-                    HTTP_1_1_COOKIE_DELIM,
-                );
-                for (let i = 0; i < cookie_entries.length; i++) {
-                    const [key, value] = cookie_entries[i].split(
-                        HTTP_1_1_COOKIE_VALUE_DELIM,
-                    );
-
-                    if (!key || !value) {
-                        continue;
-                    }
-
-                    cookies[key.trim()] = value.trim();
+                    continue;
                 }
 
-                break;
+                method += LOOKUP_UPPER[char];
+
+                continue;
             }
 
-            case "content_length": {
-                headers["content_length"] = Number(
-                    curr_line.substring(
-                        curr_header_name.length + HTTP_1_1_HEADER_DELIM.length,
-                        header_line_end_index,
-                    ),
-                );
-                break;
+            case "STATE_PATH": {
+                if (char === CHAR_SPACE) {
+                    state = "STATE_VERSION_MAJOR";
+
+                    continue;
+                }
+
+                pathname += LOOKUP_NORMAL[char];
+
+                continue;
             }
 
-            default: {
-                headers[curr_header_name] = curr_line.substring(
-                    curr_header_name.length + HTTP_1_1_HEADER_DELIM.length,
-                    header_line_end_index,
-                );
+            case "STATE_VERSION_MAJOR": {
+                if (char === CHAR_PERIOD) {
+                    state = "STATE_VERSION_MINOR";
 
-                break;
+                    continue;
+                }
+
+                if (
+                    char !== CHAR_H && char !== CHAR_T &&
+                    char !== CHAR_P && char !== CHAR_SLASH
+                ) {
+                    version_major = LOOKUP_NORMAL[char];
+                }
+
+                continue;
+            }
+
+            case "STATE_VERSION_MINOR": {
+                if (
+                    char === CHAR_CR &&
+                    chunk[i + 1] === CHAR_LF
+                ) {
+                    state = "STATE_HEADER_KEY";
+
+                    continue;
+                }
+
+                version_minor = LOOKUP_NORMAL[char];
+
+                continue;
+            }
+
+            case "STATE_HEADER_KEY": {
+                if (char === CHAR_COLON) {
+                    state = "STATE_HEADER_VALUE";
+
+                    continue;
+                }
+
+                if (
+                    curr_header_key.trim() !== "" &&
+                    curr_header_value.trim() !== "" &&
+                    !headers[curr_header_key]
+                ) {
+                    headers[curr_header_key] = curr_header_value;
+                    curr_header_key = "";
+                    curr_header_value = "";
+                }
+
+                if (char === CHAR_HYPHEN) {
+                    curr_header_key += "_";
+
+                    continue;
+                }
+
+                curr_header_key += LOOKUP_LOWER[char];
+
+                continue;
+            }
+
+            case "STATE_HEADER_VALUE": {
+                if (
+                    char === CHAR_CR &&
+                    chunk[i + 1] === CHAR_LF &&
+                    chunk[i + 2] === CHAR_CR &&
+                    chunk[i + 3] === CHAR_LF
+                ) {
+                    state = "STATE_BODY";
+
+                    continue;
+                }
+
+                if (
+                    char === CHAR_CR &&
+                    chunk[i + 1] === CHAR_LF
+                ) {
+                    state = "STATE_HEADER_KEY";
+
+                    continue;
+                }
+
+                if (
+                    char === CHAR_SPACE &&
+                    chunk[i - 1] === CHAR_COLON
+                ) {
+                    continue;
+                }
+
+                curr_header_value += LOOKUP_NORMAL[char];
+
+                continue;
+            }
+
+            case "STATE_BODY": {
+                if (
+                    curr_header_key.trim() !== "" &&
+                    curr_header_value.trim() !== "" &&
+                    !headers[curr_header_key]
+                ) {
+                    headers[curr_header_key] = curr_header_value;
+                    curr_header_key = "";
+                    curr_header_value = "";
+                }
+
+                const IS_BODY_BEGINNING = char === CHAR_LF &&
+                    chunk[i + 1] === CHAR_CR &&
+                    chunk[i + 2] === CHAR_LF;
+                const IS_NO_CONTENT_LENGTH = !headers.content_length;
+
+                if (
+                    IS_BODY_BEGINNING && IS_NO_CONTENT_LENGTH &&
+                    chunk[i + 3]
+                ) {
+                    safe_write(
+                        conn,
+                        encoder.encode(
+                            "HTTP/1.1 411 Length Required\r\nServer: catboy",
+                        ),
+                    );
+                    safe_close(conn);
+
+                    break byte_loop;
+                }
+
+                if (IS_BODY_BEGINNING) {
+                    body_offset = i + 3;
+                }
+
+                if (headers.content_length && i >= body_offset) {
+                    body_bytes_stored_with_bad_practice.push(char);
+                }
+
+                continue;
             }
         }
     }
 
-    let body: T_Http_Request["body"] = null;
-    if (typeof headers.content_length === "number") {
-        const body_bytes = req_bytes.slice(
-            req_bytes.length - headers.content_length,
-        );
+    const body_bytes = new Uint8Array(
+        body_bytes_stored_with_bad_practice,
+    );
+    const body_text = decoder.decode(body_bytes);
+    let body_parsed = null;
 
-        body = { bytes: body_bytes };
-        try {
-            body.text = new TextDecoder().decode(body_bytes);
-        } catch {
-            // nothing
-        }
-    }
-
-    if (body?.text && headers.content_type) {
+    if (body_text.length > 0 && headers.content_type) {
         switch (headers.content_type) {
             case "application/json": {
                 try {
-                    body.parsed = JSON.parse(body.text);
+                    body_parsed = JSON.parse(body_text);
                 } catch {
                     // nothing
                 }
@@ -174,8 +289,8 @@ export const parse_request = (
 
             case "application/x-www-form-urlencoded":
                 try {
-                    body.parsed = Object.fromEntries(
-                        new URLSearchParams(body.text),
+                    body_parsed = Object.fromEntries(
+                        new URLSearchParams(body_text),
                     );
                 } catch {
                     // nothing
@@ -185,15 +300,43 @@ export const parse_request = (
         }
     }
 
-    const rid = uuidv1.generate();
+    let body = null;
+    if (body_bytes.length > 0) {
+        if (body_text) {
+            body = { bytes: body_bytes, text: body_text, parsed: body_parsed };
+        } else {
+            body = { bytes: body_bytes, text: null, parsed: body_parsed };
+        }
+    }
 
+    const cookies: { [key: string]: string } = {};
+    if (headers.cookie) {
+        const cookie_entries = headers.cookie.split(HTTP_1_1_COOKIE_DELIM);
+        for (let i = 0; i < cookie_entries.length; i++) {
+            const [key, value] = cookie_entries[i].split(
+                HTTP_1_1_COOKIE_VALUE_DELIM,
+            );
+
+            if (!key || !value) {
+                continue;
+            }
+
+            cookies[key.trim()] = value.trim();
+        }
+        delete headers.cookie;
+    }
+
+    const rid = uuidv1.generate();
     return {
         id: rid,
         method,
-        pathname,
-        version,
-        cookies,
+        pathname: sanitise_pathname(pathname),
+        version: {
+            major: version_major,
+            minor: version_minor,
+        },
         headers,
+        cookies,
         body,
         respond: (
             opts: {
@@ -208,14 +351,14 @@ export const parse_request = (
                 ...opts.headers,
             };
 
-            let res = `HTTP/1.1 ${opts.status} ${STATUS_TEXT[opts.status]}\n`;
+            let res = `HTTP/1.1 ${opts.status} ${STATUS_TEXT[opts.status]}\r\n`;
 
             const header_entries = Object.entries(opts.headers);
             for (let i = 0; i < header_entries.length; i++) {
                 const [header, value] = header_entries[i];
                 res += format_header(header);
                 res += HTTP_1_1_HEADER_DELIM;
-                res += `${value}\n`;
+                res += `${value}\r\n`;
             }
 
             let res_bytes = encoder.encode(res);
@@ -223,15 +366,18 @@ export const parse_request = (
             if (opts.body) {
                 let body_bytes: Uint8Array | undefined;
                 if (typeof opts.body === "string") {
-                    body_bytes = encoder.encode(`\n${opts.body}`);
+                    body_bytes = encoder.encode(`\r\n${opts.body}`);
                 } else {
                     body_bytes = new Uint8Array([
-                        ...encoder.encode("\n"),
+                        ...encoder.encode("\r\n"),
                         ...opts.body,
                     ]);
                 }
 
-                res_bytes = new Uint8Array([...res_bytes, ...body_bytes]);
+                res_bytes = new Uint8Array([
+                    ...res_bytes,
+                    ...body_bytes,
+                ]);
             }
 
             return res_bytes;
