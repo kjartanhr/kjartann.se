@@ -1,0 +1,19 @@
+<a
+    href="{{ it.url }}"
+    target="_blank"
+    class="border border-gray-700 shadow relative group transition duration-50 ease z-30"
+>
+    <div class="absolute h-full w-full flex flex-col gap-1 items-center justify-center z-10 p-1">
+        <p class="transition duration-50 ease text-white text-xl opacity-0 group-hover:opacity-100">
+            {{ it.name }}
+        </p>
+        <p class="transition duration-50 ease text-gray-200 text-sm opacity-0 group-hover:opacity-100">
+            {{ it.domain }}
+        </p>
+    </div>
+
+    <img
+        src="{{ '/static/img/screenshots/' + it.screenshot }}"
+        class="transition duration-50 ease h-full w-full opacity-100 group-hover:opacity-50"
+    />
+</a>

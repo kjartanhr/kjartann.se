@@ -88,7 +88,14 @@ window._namespace_kjartann_se = {
                 return null;
             }
 
-            if (!res || (res.status !== 404 && !res.ok)) {
+            if (!res) {
+                return null;
+            }
+
+            const IS_REDIRECT_STATUS = res.status.toString().charAt(0) === "3";
+            const location = res.headers.get("location");
+
+            if (res.status !== 404 && !res.ok) {
                 return null;
             }
 
@@ -108,7 +115,10 @@ window._namespace_kjartann_se = {
                 return null;
             }
 
-            return parse_html(html);
+            return {
+                ...parse_html(html),
+                redirect_uri: IS_REDIRECT_STATUS ? location : null,
+            };
         };
 
         const handle_local_anchor_click = async (event) => {
@@ -121,13 +131,19 @@ window._namespace_kjartann_se = {
 
             if (event.currentTarget) {
                 const href = event.currentTarget.href;
+
+                NProgress.start();
+
                 const data = await fetch_page(href);
+
                 if (data) {
                     document.body.innerHTML = data.body;
                     document.title = data.title;
-                    history.pushState({}, "", href);
+                    history.pushState({}, "", data?.redirect_uri ?? href);
                     hook_anchors();
                 }
+
+                NProgress.done();
             }
         };
 

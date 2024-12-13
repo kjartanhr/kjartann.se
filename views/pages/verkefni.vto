@@ -1,0 +1,24 @@
+{{ layout "views/layout/wrapper.vto" }}
+
+<div class="w-full pt-24">
+    <div class="max-w-screen-2xl mx-auto px-8">
+        <div class="animate__animated animate__fadeInUp">
+            <h1 class="text-4xl font-bold text-white">Verkefni</h1>
+        </div>
+        <div class="max-w-screen-sm pt-5 pb-8">
+            <div class="animate__animated animate__fadeIn delay-450 flex flex-col gap-4">
+                <p class="text-gray-200 text-lg">Hér eru hlekkir til allra uppáhalds verkefnanna minna (opnast í nýjum flipa). Inniheldur persónuleg verkefni og verkefni unnin fyrir aðra.</p>
+            </div>
+        </div>
+        <div class="animate__animated animate__fadeIn delay-650 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {{ include "views/partials/projects.vto" }}
+        </div>
+        <div class="max-w-screen-sm pt-8">
+            <div class="animate__animated animate__fadeIn delay-850 flex flex-col gap-4">
+                <p class="text-gray-200 text-lg">Athugið að verkefnum kann að hafa verið breytt af verkkaupa eftir afhendingu og útgáfu.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ /layout }}
