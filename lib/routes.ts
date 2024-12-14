@@ -36,6 +36,10 @@ const find_route = (
                 ok = true;
             }
 
+            if (entry === query_entries[i].split("?")[0]) {
+                ok = true;
+            }
+
             if (ok && i === route_entries.length - 1) {
                 return {
                     index: route_index,

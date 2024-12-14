@@ -25,7 +25,7 @@ const encoder = new TextEncoder();
 const HTTP_1_1_HEADER_DELIM = ": ";
 const HTTP_1_1_COOKIE_DELIM = ";";
 const HTTP_1_1_COOKIE_VALUE_DELIM = "=";
-const ILLEGAL_RE = /[\?<>\\:\*\|"]/g;
+const ILLEGAL_RE = /[<>\\:\*\|"]/g;
 // deno-lint-ignore no-control-regex
 const CONTROL_RE = /[\x00-\x1f\x80-\x9f]/g;
 const RESERVED_RE = /^\.+$/;
@@ -73,7 +73,7 @@ export type T_Http_Request = {
         minor: string;
     };
     cookies: { [key: string]: string };
-    headers: { [key: string]: string | number };
+    headers: { [key: string]: string };
     body:
         | { bytes: Uint8Array; text: string | null; parsed: object | null }
         | null;
