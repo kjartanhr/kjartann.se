@@ -18,6 +18,7 @@ import {
     LOOKUP_NORMAL,
     LOOKUP_UPPER,
 } from "@/lib/ascii.ts";
+import { Intentional_Any } from "@/lib/error.ts";
 
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
@@ -72,10 +73,15 @@ export type T_Http_Request = {
         major: string;
         minor: string;
     };
+    query: URLSearchParams;
     cookies: { [key: string]: string };
     headers: { [key: string]: string };
     body:
-        | { bytes: Uint8Array; text: string | null; parsed: object | null }
+        | {
+            bytes: Uint8Array;
+            text: string | null;
+            parsed: Intentional_Any | null;
+        }
         | null;
     respond: (
         opts: {
@@ -326,6 +332,16 @@ export const parse_request = (
         delete headers.cookie;
     }
 
+    let query = new URLSearchParams();
+    const path_query = pathname.split("?")[1];
+    if (path_query) {
+        try {
+            query = new URLSearchParams(path_query);
+        } catch {
+            //
+        }
+    }
+
     const rid = uuidv1.generate();
     return {
         id: rid,
@@ -335,6 +351,7 @@ export const parse_request = (
             major: version_major,
             minor: version_minor,
         },
+        query,
         headers,
         cookies,
         body,
