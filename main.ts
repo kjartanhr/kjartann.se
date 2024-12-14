@@ -84,6 +84,26 @@ const main = async (env: string | undefined) => {
             for await (const chunk of conn.readable) {
                 const req = parse_request(chunk, conn);
 
+                // remove trailing slash from GET requests
+                if (req.method === "GET" && req.pathname.endsWith("/")) {
+                    const location = req.pathname.substring(
+                        0,
+                        req.pathname.length - 1,
+                    );
+
+                    await safe_write(
+                        conn,
+                        req.respond({
+                            status: 301,
+                            headers: {
+                                location,
+                            },
+                        }),
+                    );
+
+                    continue;
+                }
+
                 try {
                     handle_routing(conn, req, find_route(req.pathname));
                 } catch (e) {
