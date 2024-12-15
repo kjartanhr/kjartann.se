@@ -85,7 +85,10 @@ const main = async (env: string | undefined) => {
                 const req = parse_request(chunk, conn);
 
                 // remove trailing slash from GET requests
-                if (req.method === "GET" && req.pathname.endsWith("/")) {
+                if (
+                    req.method === "GET" && req.pathname.endsWith("/") &&
+                    req.pathname !== "/"
+                ) {
                     const location = req.pathname.substring(
                         0,
                         req.pathname.length - 1,

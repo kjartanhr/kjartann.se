@@ -24,12 +24,31 @@ const find_route = (
         const params: { [key: string]: string } = {};
 
         for (let i = 0; i < route_entries.length; i++) {
+            if (typeof query_entries[i] !== "string") {
+                continue;
+            }
+
             const entry = route_entries[i];
+            const handler = {
+                index: route_index,
+                key: route_keys[route_index],
+                handler: route_handlers[route_keys[route_index]],
+                params,
+            };
             let ok = false;
+
             if (entry.startsWith("[") && entry.endsWith("]")) {
                 const param_name = entry.substring(1, entry.length - 1);
                 params[param_name] = query_entries[i];
                 ok = true;
+            }
+
+            if (
+                entry === query_entries[i] && route_entries[i + 1] &&
+                route_entries[i + 1].startsWith("[") &&
+                route_entries[i + 1].endsWith("]")
+            ) {
+                return handler;
             }
 
             if (entry === query_entries[i]) {
@@ -41,12 +60,7 @@ const find_route = (
             }
 
             if (ok && i === route_entries.length - 1) {
-                return {
-                    index: route_index,
-                    key: route_keys[route_index],
-                    handler: route_handlers[route_keys[route_index]],
-                    params,
-                };
+                return handler;
             }
 
             if (ok) {
