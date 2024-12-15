@@ -44,5 +44,5 @@ deno run dev
 To run in "production":
 
 ```
-PRODUCTION_MODE=PRODUCTION deno run --allow-net --allow-read --allow-env --env-file=.env main.ts
+PRODUCTION_MODE=PRODUCTION deno run --allow-net --allow-sys=networkInterfaces,hostname --allow-read --allow-env --env-file=.env main.ts
 ```
