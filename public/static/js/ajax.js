@@ -136,6 +136,7 @@ window._namespace_kjartann_se = {
                 if (data) {
                     document.body.innerHTML = data.body;
                     document.title = data.title;
+                    window.scroll(0, 0);
                     history.pushState({}, "", data.location);
                     hook_anchors();
                     hook_forms();
@@ -159,6 +160,7 @@ window._namespace_kjartann_se = {
             if (data) {
                 document.body.innerHTML = data.body;
                 document.title = data.title;
+                window.scroll(0, 0);
                 hook_anchors();
                 hook_forms();
                 hook_toggles();
