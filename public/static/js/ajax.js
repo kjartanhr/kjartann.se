@@ -138,6 +138,8 @@ window._namespace_kjartann_se = {
                     document.title = data.title;
                     history.pushState({}, "", data.location);
                     hook_anchors();
+                    hook_forms();
+                    hook_toggles();
                 }
 
                 NProgress.done();
@@ -158,6 +160,8 @@ window._namespace_kjartann_se = {
                 document.body.innerHTML = data.body;
                 document.title = data.title;
                 hook_anchors();
+                hook_forms();
+                hook_toggles();
             }
 
             NProgress.done();
@@ -248,7 +252,9 @@ window._namespace_kjartann_se = {
 
             form_element.dataset.loading = "false";
 
+            hook_anchors();
             hook_forms();
+            hook_toggles();
 
             if (window.onload_turnstile_callback) {
                 window.onload_turnstile_callback();
@@ -278,6 +284,40 @@ window._namespace_kjartann_se = {
         };
 
         hook_forms();
+
+        const hook_toggles = () => {
+            const toggles = document.querySelectorAll("[data-toggle]");
+            for (let i = 0; i < toggles.length; i++) {
+                const toggle = toggles[i];
+                const target = document.querySelector(toggle.dataset.toggle);
+                if (
+                    !target || !target.dataset.state
+                ) {
+                    console.log("ff");
+
+                    continue;
+                }
+
+                if (
+                    target.dataset.state !== "false" &&
+                    target.dataset.state !== "true"
+                ) {
+                    continue;
+                }
+
+                toggle.addEventListener("click", (event) => {
+                    event.preventDefault();
+
+                    if (target.dataset.state === "true") {
+                        target.dataset.state = "false";
+                    } else {
+                        target.dataset.state = "true";
+                    }
+                });
+            }
+        };
+
+        hook_toggles();
     },
 };
 

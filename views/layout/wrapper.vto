@@ -59,17 +59,24 @@
                             <a class="cursor-not-allowed"><img class="h-6 w-6 opacity-50" src="/static/img/flags/is.svg" alt="Iceland flag" /></a>
                         {{ /if }}
                     </div>
-                    <div class="flex flex-col md:flex-row md:items-center gap-2">
+                    <div
+                        id="nav-parent"
+                        class="flex flex-col md:flex-row md:items-center gap-2 group"
+                        data-state="false"
+                    >
                         <div class="flex flex-grow-0 md:flex-grow">
                             <a href="/{{ it.language }}" class="text-2xl text-gray-200 transition duration-50 ease hover:text-white">Kjartan Hrafnkelsson</a>
                             <div class="flex-grow"></div>
-                            <button class="block sm:hidden focus:outline-none">
-                                <!--{ (menu === false) ?--> <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg><!-- : -->
-                                <!-- <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"/></svg>} -->
+                            <button
+                                class="block md:hidden focus:outline-none"
+                                data-toggle="#nav-parent"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white group-data-[state='false']:block group-data-[state='true']:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white group-data-[state='false']:hidden group-data-[state='true']:block" viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"/></svg>
                             </button>
                         </div>
                         
-                        <div class="flex sm:flex flex-col sm:flex-row gap-1 sm:gap-8">
+                        <div class="group-data-[state='false']:hidden group-data-[state='true']:flex md:flex md:group-data-[state='false']:flex flex-col md:flex-row gap-1 md:gap-8">
                             {{ set link_class = "text-lg py-2 text-gray-200 transition duration-50 ease transform hover:-translate-y-0.5 hover:text-gray-100 block font-medium" }}
 
                             {{ if language === "is" }}
