@@ -295,8 +295,6 @@ window._namespace_kjartann_se = {
                 if (
                     !target || !target.dataset.state
                 ) {
-                    console.log("ff");
-
                     continue;
                 }
 
