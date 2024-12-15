@@ -8,7 +8,7 @@ export default async function handler(
     const render = (template: string, data?: Record<string, unknown>) => {
         return render_view(template, {
             ...data,
-            language: "is",
+            language: "en",
             pathname: req.pathname,
         });
     };
@@ -23,82 +23,82 @@ export default async function handler(
             headers: {
                 content_type: "text/html",
             },
-            body: await render("pages/is/index.vto", { title: "Heim" }),
+            body: await render("pages/en/index.vto", { title: "Homepage" }),
         });
     }
 
     switch (req.params.page) {
-        case "um": {
-            return req.respond({
-                status: 200,
-                headers: {
-                    content_type: "text/html",
-                },
-                body: await render("pages/is/um.vto", { title: "Um mig" }),
-            });
-        }
-
         case "about": {
             return req.respond({
-                status: 301,
-                headers: { location: "/is/um" },
-            });
-        }
-
-        case "verkefni": {
-            return req.respond({
                 status: 200,
                 headers: {
                     content_type: "text/html",
                 },
-                body: await render("pages/is/verkefni.vto", {
-                    title: "Verkefni",
-                }),
+                body: await render("pages/en/about.vto", { title: "About me" }),
+            });
+        }
+
+        case "um": {
+            return req.respond({
+                status: 301,
+                headers: { location: "/en/about" },
             });
         }
 
         case "work": {
             return req.respond({
-                status: 301,
-                headers: { location: "/is/verkefni" },
-            });
-        }
-
-        case "samband": {
-            return req.respond({
                 status: 200,
                 headers: {
                     content_type: "text/html",
                 },
-                body: await render("pages/is/samband.vto", {
-                    title: "Hafa samband",
+                body: await render("pages/en/work.vto", {
+                    title: "My work",
                 }),
+            });
+        }
+
+        case "verkefni": {
+            return req.respond({
+                status: 301,
+                headers: { location: "/en/work" },
             });
         }
 
         case "contact": {
             return req.respond({
-                status: 301,
-                headers: { location: "/is/samband" },
-            });
-        }
-
-        case "aletrun": {
-            return req.respond({
                 status: 200,
                 headers: {
                     content_type: "text/html",
                 },
-                body: await render("pages/is/aletrun.vto", {
-                    title: "Áletrun",
+                body: await render("pages/en/contact.vto", {
+                    title: "Contact me",
                 }),
+            });
+        }
+
+        case "samband": {
+            return req.respond({
+                status: 301,
+                headers: { location: "/en/contact" },
             });
         }
 
         case "impressum": {
             return req.respond({
+                status: 200,
+                headers: {
+                    content_type: "text/html",
+                },
+                body: await render("pages/en/impressum.vto", {
+                    title: "Impressum",
+                }),
+            });
+        }
+
+        case "aletrun": {
+            return req.respond({
                 status: 301,
-                headers: { location: "/is/aletrun" },
+                headers: { location: "/en/impressum" },
             });
         }
 

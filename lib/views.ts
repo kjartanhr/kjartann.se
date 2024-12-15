@@ -14,6 +14,7 @@ export const render = async (
         {
             ...data,
             now: new Date(),
+            turnstile_site_key: Deno.env.get("TURNSTILE_PK"),
         },
     );
 

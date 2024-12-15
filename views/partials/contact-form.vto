@@ -1,0 +1,82 @@
+{{ if it.language === "is" }}
+    {{ set name_placeholder = "Fullt nafn (nauðsynlegt)" }}
+    {{ set email_placeholder = "Netfang (nauðsynlegt)" }}
+    {{ set subject_placeholder = "Viðfangsefni (nauðsynlegt)" }}
+    {{ set message_placeholder = "Skilaboð (nauðsynlegt)" }}
+    {{ set submit_placeholder = "Senda" }}
+{{ /if }}
+
+{{ if it.language === "en" }}
+    {{ set name_placeholder = "Full name (required)" }}
+    {{ set email_placeholder = "E-mail address (required)" }}
+    {{ set subject_placeholder = "Subject (required)" }}
+    {{ set message_placeholder = "Message (required)" }}
+    {{ set submit_placeholder = "Submit" }}
+{{ /if }}
+
+<form
+    class="flex flex-col gap-5 group"
+    action="/api/v1/form?lang={{ it.language }}"
+    method="POST"
+    data-replace="outerHTML"
+>
+    {{ if it.success }}
+        <span class="bg-green-600 p-3 text-white">Skilaboð send!</span>
+    {{ /if }}
+
+    {{ if it.error }}
+        <span class="bg-red-600 p-3 text-white">{{ it.error }}</span>
+    {{ /if }}
+
+    <input
+        required
+        class="w-full block p-3 border-2 border-white bg-transparent focus:outline-none focus:border-red-500 transition duration-150 text-white"
+        type="text"
+        placeholder="{{ name_placeholder }}"
+        autoComplete="name"
+        name="name"
+        {{ if it.name_value }}
+        value="{{ it.name_value }}"
+        {{ /if }}
+    />
+    <input
+        required
+        class="w-full block p-3 border-2 border-white bg-transparent focus:outline-none focus:border-red-500 transition duration-150 text-white" 
+        type="text"
+        placeholder="{{ email_placeholder }}"
+        autoComplete="email"
+        name="email"
+        {{ if it.email_value }}
+        value="{{ it.email_value }}"
+        {{ /if }}
+    />
+    <input
+        required
+        class="w-full block p-3 border-2 border-white bg-transparent focus:outline-none focus:border-red-500 transition duration-150 text-white"
+        type="text"
+        placeholder="{{ subject_placeholder }}"
+        name="subject"
+        {{ if it.subject_value }}
+        value="{{ it.subject_value }}"
+        {{ /if }}
+    />
+    <textarea
+        required
+        rows="7"
+        placeholder="{{ message_placeholder }}"
+        class="w-full block p-3 border-2 border-white bg-transparent focus:outline-none focus:border-red-500 transition duration-150 text-white"
+        name="message"
+    >{{ if it.message_value }}{{ it.message_value }}{{ /if }}</textarea>
+    <div id="cf-turnstile"></div>
+    <button
+        type="submit"
+        class="text-base sm:text-lg shadow bg-red-600 py-3 px-8 text-white transition duration-50 ease transform hover:-translate-y-0.5 block font-medium cursor-pointer focus:outline-none focus:bg-red-700"
+    >
+        <span class="relative z-10 group-data-[loading='true']:opacity-0">
+            {{ submit_placeholder }}
+        </span>
+        <div class="absolute top-0 left-0 flex h-full w-full items-center justify-center opacity-0 group-data-[loading='true']:opacity-100">
+            {{ include "views/partials/spinner.vto" }}
+        </div>
+    </button>
+</form>

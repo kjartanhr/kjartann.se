@@ -32,5 +32,3 @@ from scratch with primitives provided by Deno.
 - Vento templating engine
 - Tailwind CSS
 - html-minifier
-
-(c) 2024 Kjartan Hrafnkelsson

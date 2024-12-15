@@ -1,0 +1,56 @@
+{{ layout "views/layout/wrapper.vto" }}
+
+<div class="w-full pt-24">
+    <div class="max-w-screen-2xl mx-auto px-8">
+        <div class="animate__animated animate__fadeInUp">
+            <h1 class="text-4xl font-bold text-white">About me</h1>
+        </div>
+        <div class="max-w-screen-sm pt-5">
+            <div class="animate__animated animate__fadeIn delay-450 flex flex-col gap-4">
+                <p class="text-gray-200 text-lg">Hi, I'm a frontend developer from Reykjavík, Iceland with roughly 8 years of actual development experience & a huge passion for open source software.</p>
+                <p class="text-gray-200 text-lg">I call myself a frontend developer but I focus mostly on the design aspect of frontend work and therefore most of my work centres around design. However I am experienced in full-stack developemnt and sometimes work on the backend in addition to my frontend work, the startup <a href="https://dev-live.bokar.is" class="text-white underline" target="_blank" rel="noreferrer">Bókar</a> is my latest example of work of this nature.</p>
+                <p class="text-gray-200 text-lg">I use the following technologies in my work and consider myself "fluent" in them:</p>
+                <ul class="list-disc ml-6 text-gray-200 text-lg">
+                    <li>JavaScript
+                        <ul class="list-disc ml-6 text-gray-200 text-lg">
+                            <li>TypeScript</li>
+                            <li><a href="https://react.dev" class="text-white underline" target="_blank" rel="noreferrer">React</a></li>
+                            <li><a href="https://nextjs.org" class="text-white underline" target="_blank" rel="noreferrer">Next.js</a> (full-stack)</li>
+                            <li><a href="https://prisma.io" class="text-white underline" target="_blank" rel="noreferrer">Prisma</a></li>
+                            <li><a href="https://expressjs.com" class="text-white underline" target="_blank" rel="noreferrer">Express</a></li>
+                        </ul>
+                    </li>
+                    <li>CSS
+                        <ul class="list-disc ml-6 text-gray-200 text-lg">
+                            <li><a href="https://tailwindcss.com" class="text-white underline" target="_blank" rel="noreferrer">Tailwind</a></li>
+                        </ul>
+                    </li>
+                    <li>Python</li>
+                    <li><a href="https://redis.io" class="text-white underline" target="_blank" rel="noreferrer">Redis</a></li>
+                </ul>
+                <p class="text-gray-200 text-lg">Additionally I use the following technologies actively in my work but my confidence with them is not as high:</p>
+                <ul class="list-disc ml-6 text-gray-200 text-lg">
+                    <li>MySQL / MariaDB / SQLite</li>
+                    <li>MongoDB</li>
+                </ul>
+                <h1 class="text-2xl font-bold text-white">Dabbling in BGP & Global Routing</h1>
+                <p class="text-gray-200 text-lg">In recent times I've started to experiment with a technology called BGP, which is the underlying technology for much of global internet routing. This experimentation involves the following:</p>
+                <ul class="list-disc ml-6 text-gray-200 text-lg">
+                    <li>Finding an "IP transit" (effectively an internet connection) partner</li>
+                    <li>Get an ASN registered</li>
+                    <li>Set up the connection with the network provider, with a "BGP session"</li>
+                </ul>
+                <p class="text-gray-200 text-lg">My network is operated under the ASN <a href="https://bgp.tools/as/51019" class="text-white underline" target="_blank" rel="noreferrer">AS51019</a> which I use for IPv6 internet access at home via a tunnel from Frankfurt. In Frankfurt I also operate some secondary infrastructure.</p>
+                <p class="text-gray-200 text-lg">The latest development of AS51019 are the Internet Exchange Points (IXPs) in Frankfurt which I have connected to, they are:</p>
+                <ul class="list-disc ml-6 text-gray-200 text-lg">
+                    <li>NL-ix</li>
+                    <li>LocIX</li>
+                    <li>FogIXP</li>
+                </ul>
+                <p class="text-gray-200 text-lg">In addition to the above I have joined a few others around the world but this led to me becoming, by technicality, #1 peered BGP network in Iceland according to <a href="https://bgp.tools/rankings/IS" class="text-white underline" target="_blank" rel="noreferrer">bgp.tools</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ /layout }}

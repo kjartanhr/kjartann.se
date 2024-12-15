@@ -92,9 +92,6 @@ window._namespace_kjartann_se = {
                 return null;
             }
 
-            const IS_REDIRECT_STATUS = res.status.toString().charAt(0) === "3";
-            const location = res.headers.get("location");
-
             if (res.status !== 404 && !res.ok) {
                 return null;
             }
@@ -117,7 +114,7 @@ window._namespace_kjartann_se = {
 
             return {
                 ...parse_html(html),
-                redirect_uri: IS_REDIRECT_STATUS ? location : null,
+                location: res.url,
             };
         };
 
@@ -139,20 +136,48 @@ window._namespace_kjartann_se = {
                 if (data) {
                     document.body.innerHTML = data.body;
                     document.title = data.title;
-                    history.pushState({}, "", data?.redirect_uri ?? href);
+                    history.pushState({}, "", data.location);
                     hook_anchors();
                 }
 
                 NProgress.done();
+
+                if (window.onload_turnstile_callback) {
+                    window.onload_turnstile_callback();
+                }
             }
         };
+
+        const handle_history_navigation = async () => {
+            const href = document.location;
+
+            NProgress.start();
+
+            const data = await fetch_page(href);
+            if (data) {
+                document.body.innerHTML = data.body;
+                document.title = data.title;
+                hook_anchors();
+            }
+
+            NProgress.done();
+
+            if (window.onload_turnstile_callback) {
+                window.onload_turnstile_callback();
+            }
+        };
+
+        window.addEventListener("popstate", handle_history_navigation);
 
         const hook_anchors = () => {
             const anchors = document.querySelectorAll("a");
             for (let i = 0; i < anchors.length; i++) {
                 const a = anchors[i];
 
-                if (!a.href || !a.href.startsWith(site_base_url)) {
+                if (
+                    !a.href || !a.href.startsWith(site_base_url) ||
+                    a.href.split(".")[1]
+                ) {
                     continue;
                 }
 
@@ -161,6 +186,98 @@ window._namespace_kjartann_se = {
         };
 
         hook_anchors();
+
+        const handle_form_submission = async (event, form_element) => {
+            event.preventDefault();
+
+            form_element.dataset.loading = "true";
+
+            const form_data = {};
+
+            const inputs = event.currentTarget.querySelectorAll(
+                "input, textarea",
+            );
+            for (let i = 0; i < inputs.length; i++) {
+                const input = inputs[i];
+
+                if (input.name && input.value) {
+                    form_data[input.name] = input.value;
+                }
+            }
+
+            let res;
+            try {
+                res = await fetch(event.currentTarget.action, {
+                    method: event.currentTarget.method,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "text/html",
+                    },
+                    body: JSON.stringify(form_data),
+                });
+            } catch {
+                res = undefined;
+            }
+
+            if (!res) {
+                return;
+            }
+
+            let data;
+            try {
+                data = await res.text();
+            } catch {
+                data = undefined;
+            }
+
+            if (!data) {
+                return;
+            }
+
+            switch (form_element.dataset.replace) {
+                case "innerHTML": {
+                    form_element.innerHTML = data;
+                    break;
+                }
+
+                case "outerHTML": {
+                    form_element.outerHTML = data;
+                    break;
+                }
+            }
+
+            form_element.dataset.loading = "false";
+
+            hook_forms();
+
+            if (window.onload_turnstile_callback) {
+                window.onload_turnstile_callback();
+            }
+        };
+
+        const hook_forms = () => {
+            const forms = document.querySelectorAll(
+                `form[data-replace]`,
+            );
+            for (let i = 0; i < forms.length; i++) {
+                const form = forms[i];
+
+                if (
+                    !form.dataset.replace ||
+                    (form.dataset.replace !== "outerHTML" &&
+                        form.dataset.replace !== "innerHTML")
+                ) {
+                    continue;
+                }
+
+                form.addEventListener(
+                    "submit",
+                    (event) => handle_form_submission(event, form),
+                );
+            }
+        };
+
+        hook_forms();
     },
 };
 
