@@ -22,7 +22,7 @@ from scratch with primitives provided by Deno.
       server-side and client-side JavaScript.
 - [ ] Add a blog section to my website.
 - [ ] Use Drizzle ORM - bonus points if it's in a Deno project.
-- [ ] Use HTMX inspired concepts such as responding with partial HTML content
+- [x] Use HTMX inspired concepts such as responding with partial HTML content
       from the server to build an interactive web-app experience.
 
 ## Technologies used in this project
