@@ -44,7 +44,8 @@ const find_route = (
             }
 
             if (
-                entry === query_entries[i] && route_entries[i + 1] &&
+                entry === query_entries[i] && !query_entries[i + 1] &&
+                route_entries[i + 1] &&
                 route_entries[i + 1].startsWith("[") &&
                 route_entries[i + 1].endsWith("]")
             ) {
