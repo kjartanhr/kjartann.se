@@ -32,3 +32,17 @@ from scratch with primitives provided by Deno.
 - Vento templating engine
 - Tailwind CSS
 - html-minifier
+
+## How to run
+
+To run the development server:
+
+```
+deno run dev
+```
+
+To run in "production":
+
+```
+PRODUCTION_MODE=PRODUCTION deno run --allow-net --allow-read --allow-env --env-file=.env main.ts
+```
