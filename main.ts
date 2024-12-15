@@ -107,8 +107,6 @@ const main = async (env: string | undefined) => {
                 try {
                     handle_routing(conn, req, find_route(req.pathname));
                 } catch (e) {
-                    console.error("lalala", e);
-
                     if (env && env.toLowerCase() === "PRODUCTION") {
                         await safe_write(
                             conn,
