@@ -24,6 +24,7 @@ from scratch with primitives provided by Deno.
 - [ ] Use Drizzle ORM - bonus points if it's in a Deno project.
 - [x] Use HTMX inspired concepts such as responding with partial HTML content
       from the server to build an interactive web-app experience.
+- [ ] Test re-used code, such as HTTP FSM implementation etc., with Deno test suite.
 
 ## Technologies used in this project
 
