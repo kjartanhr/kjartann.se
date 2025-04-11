@@ -75,9 +75,9 @@ const handle_conn_err = (e: Intentional_Any) => {
 const main = async (env: string | undefined) => {
     const { find_route } = await import_routes("./routes");
 
-    const listener = Deno.listen({ port: 8080 });
+    const listener = Deno.listen({ port: 8081 });
 
-    log.info("Listening on 0.0.0.0:8080");
+    log.info("Listening on 0.0.0.0:8081");
 
     for await (const conn of listener) {
         try {
