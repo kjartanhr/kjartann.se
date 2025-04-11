@@ -40,7 +40,7 @@ export default async function handler(
 
         case "um": {
             return req.respond({
-                status: 301,
+                status: 308,
                 headers: { location: "/en/about" },
             });
         }
@@ -59,7 +59,7 @@ export default async function handler(
 
         case "verkefni": {
             return req.respond({
-                status: 301,
+                status: 308,
                 headers: { location: "/en/work" },
             });
         }
@@ -78,7 +78,7 @@ export default async function handler(
 
         case "samband": {
             return req.respond({
-                status: 301,
+                status: 308,
                 headers: { location: "/en/contact" },
             });
         }
@@ -97,7 +97,7 @@ export default async function handler(
 
         case "aletrun": {
             return req.respond({
-                status: 301,
+                status: 308,
                 headers: { location: "/en/impressum" },
             });
         }
