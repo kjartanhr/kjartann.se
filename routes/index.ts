@@ -45,7 +45,7 @@ const parse_accept_language_header = (value: string) => {
 export default function handler(
     req: T_Http_Route_Request,
 ): T_Http_Response {
-    if (req.method !== "GET") {
+    if (req.method !== "GET" && req.method !== "HEAD") {
         return req.respond({ status: 405 });
     }
 
