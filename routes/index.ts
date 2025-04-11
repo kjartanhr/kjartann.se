@@ -50,7 +50,7 @@ export default function handler(
     }
 
     const default_response = req.respond({
-        status: 301,
+        status: 308,
         headers: { location: "/en" },
     });
 
@@ -65,7 +65,7 @@ export default function handler(
         }
 
         if (first_language.language === "is") {
-            return req.respond({ status: 301, headers: { location: "/is" } });
+            return req.respond({ status: 308, headers: { location: "/is" } });
         }
     }
 
