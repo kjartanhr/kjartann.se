@@ -19,6 +19,7 @@ import {
     LOOKUP_UPPER,
 } from "@/lib/ascii.ts";
 import { Intentional_Any } from "@/lib/error.ts";
+import { min_status_response } from "@/lib/html.ts";
 
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
@@ -373,6 +374,11 @@ export const parse_request = (
                 body_bytes = encoder.encode(opts.body);
             } else if (opts.body && typeof opts.body !== "string") {
                 body_bytes = opts.body;
+            }
+
+            if ([301, 302, 307, 308].includes(opts.status) && !body_bytes) {
+                body_bytes = encoder.encode(min_status_response(opts.status));
+                opts.headers.content_type = "text/html";
             }
 
             if (!opts.headers.content_length && body_bytes) {
