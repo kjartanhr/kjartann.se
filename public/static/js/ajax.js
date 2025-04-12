@@ -141,6 +141,7 @@ window._namespace_kjartann_se = {
                     hook_anchors();
                     hook_forms();
                     hook_toggles();
+                    window?._namespace_cloudflare_com?.email_decode();
                 }
 
                 NProgress.done();
@@ -164,6 +165,7 @@ window._namespace_kjartann_se = {
                 hook_anchors();
                 hook_forms();
                 hook_toggles();
+                window?._namespace_cloudflare_com?.email_decode();
             }
 
             NProgress.done();
@@ -262,6 +264,7 @@ window._namespace_kjartann_se = {
             hook_anchors();
             hook_forms();
             hook_toggles();
+            window?._namespace_cloudflare_com?.email_decode();
 
             if (window.onload_turnstile_callback) {
                 window.onload_turnstile_callback();
