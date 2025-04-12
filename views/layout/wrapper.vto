@@ -165,6 +165,7 @@
         <script src="/static/js/nprogress.min.js"></script>
         <script src="/static/js/email-decode.min.js"></script>
         <script src="/static/js/ajax.js"></script>
+        {{ if it?.turnstile === true }}
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onload_turnstile_callback"></script>
         <script>
             window.onload_turnstile_callback = () => {
@@ -178,5 +179,6 @@
                 });
             };
         </script>
+        {{ /if }}
     </body>
 </html>
