@@ -21,5 +21,6 @@ export const render = async (
     return minify(result.content, {
         removeComments: false,
         collapseWhitespace: true,
+        minifyJS: true,
     });
 };
