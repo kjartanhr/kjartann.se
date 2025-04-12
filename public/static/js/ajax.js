@@ -318,6 +318,8 @@ window._namespace_kjartann_se = {
         };
 
         hook_toggles();
+
+        console.log('(ajax) All hooking completed.');
     },
 };
 
