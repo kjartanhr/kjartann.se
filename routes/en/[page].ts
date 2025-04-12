@@ -1,6 +1,7 @@
 import type { T_Http_Response, T_Http_Route_Request } from "@/lib/http.ts";
 import { render as render_view } from "@/lib/views.ts";
 import not_found_handler from "@/routes/404.ts";
+import { min_status_response } from "@/lib/html.ts";
 
 export default async function handler(
     req: T_Http_Route_Request,
@@ -13,8 +14,12 @@ export default async function handler(
         });
     };
 
-    if (req.method !== "GET") {
-        return req.respond({ status: 405 });
+    if (req.method !== "GET" && req.method !== "HEAD") {
+        return req.respond({
+            status: 405,
+            headers: { content_type: "text/html" },
+            body: min_status_response(405),
+        });
     }
 
     if (!req.params.page || req.params.page.trim() === "") {
