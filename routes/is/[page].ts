@@ -13,7 +13,7 @@ export default async function handler(
         });
     };
 
-    if (req.method !== "GET") {
+    if (req.method !== "GET" && req.method !== "HEAD") {
         return req.respond({ status: 405 });
     }
 

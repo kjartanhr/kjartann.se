@@ -1,4 +1,5 @@
 import type { T_Http_Response, T_Http_Route_Request } from "@/lib/http.ts";
+import { min_status_response } from "@/lib/html.ts";
 
 type T_Parsed_Language_Entry = {
     language: string;
@@ -46,7 +47,11 @@ export default function handler(
     req: T_Http_Route_Request,
 ): T_Http_Response {
     if (req.method !== "GET" && req.method !== "HEAD") {
-        return req.respond({ status: 405 });
+        return req.respond({
+            status: 405,
+            headers: { content_type: "text/html" },
+            body: min_status_response(405),
+        });
     }
 
     const default_response = req.respond({

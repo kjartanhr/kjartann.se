@@ -5,14 +5,7 @@ import { min_status_response } from "@/lib/html.ts";
 export default async function handler(
     req: T_Http_Request,
 ): Promise<T_Http_Response> {
-    if (req.method === "HEAD") {
-        return req.respond({
-            status: 404,
-            headers: { content_type: "text/html" },
-        });
-    }
-
-    if (req.method !== "GET") {
+    if (req.method !== "GET" && req.method !== "HEAD") {
         return req.respond({
             status: 405,
             headers: { content_type: "text/html" },
