@@ -188,11 +188,11 @@ window._namespace_kjartann_se = {
                     continue;
                 }
 
-                /* what does this thing do?? why did i put it here?? i'm fairly certain it just breaks all links
-                if (a.href.split(".")[1]) {
+                // do not hook anchors that link to files
+                const href_local = a.href.replace(site_base_url, '');
+                if (href_local.split(".").length > 0) {
                     continue;
                 }
-                */
 
                 a.addEventListener("click", handle_local_anchor_click);
             }
