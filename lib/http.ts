@@ -368,6 +368,17 @@ export const parse_request = (
                 ...opts.headers,
             };
 
+            let body_bytes: Uint8Array | undefined;
+            if (opts.body && typeof opts.body === "string") {
+                body_bytes = encoder.encode(opts.body);
+            } else if (opts.body && typeof opts.body !== "string") {
+                body_bytes = opts.body;
+            }
+
+            if (!opts.headers.content_length && body_bytes) {
+                opts.headers.content_length = body_bytes.length.toString();
+            }
+
             let res = `HTTP/1.1 ${opts.status} ${STATUS_TEXT[opts.status]}\r\n`;
 
             const header_entries = Object.entries(opts.headers);
@@ -380,19 +391,10 @@ export const parse_request = (
 
             let res_bytes = encoder.encode(res);
 
-            if (opts.body) {
-                let body_bytes: Uint8Array | undefined;
-                if (typeof opts.body === "string") {
-                    body_bytes = encoder.encode(`\r\n${opts.body}`);
-                } else {
-                    body_bytes = new Uint8Array([
-                        ...encoder.encode("\r\n"),
-                        ...opts.body,
-                    ]);
-                }
-
+            if (body_bytes) {
                 res_bytes = new Uint8Array([
                     ...res_bytes,
+                    ...encoder.encode("\r\n"),
                     ...body_bytes,
                 ]);
             }
