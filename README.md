@@ -37,7 +37,7 @@ from scratch with primitives provided by Deno.
 
 ## What have I learned?
 
-In sumamry:
+In summary:
 
 - HTTP is _slightly_ more complicated than `receive request`,
   `wait for entire request text`, `parse request text`, and `send response`. No,
