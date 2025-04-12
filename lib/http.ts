@@ -379,6 +379,10 @@ export const parse_request = (
                 opts.headers.content_length = body_bytes.length.toString();
             }
 
+            if (!opts.headers.content_length && !body_bytes) {
+                opts.headers.content_length = "0";
+            }
+
             let res = `HTTP/1.1 ${opts.status} ${STATUS_TEXT[opts.status]}\r\n`;
 
             const header_entries = Object.entries(opts.headers);
