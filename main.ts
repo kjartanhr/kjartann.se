@@ -100,10 +100,8 @@ const main = async (env: string | undefined) => {
                         req.respond({
                             status: 308,
                             headers: {
-                                content_type: "text/html",
                                 location,
                             },
-                            body: min_status_response(308),
                         }),
                     );
 
