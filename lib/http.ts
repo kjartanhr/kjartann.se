@@ -366,6 +366,7 @@ export const parse_request = (
             opts.headers = {
                 server: "catboy-maid",
                 x_request_id: rid,
+                date: new Date().toUTCString(),
                 ...opts.headers,
             };
 
