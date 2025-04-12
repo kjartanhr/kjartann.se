@@ -190,7 +190,7 @@ window._namespace_kjartann_se = {
 
                 // do not hook anchors that link to files
                 const href_local = a.href.replace(site_base_url, '');
-                if (href_local.split(".").length > 0) {
+                if (href_local.split(".").length > 1) {
                     continue;
                 }
 
