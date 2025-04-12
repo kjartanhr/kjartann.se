@@ -391,7 +391,7 @@ export const parse_request = (
 
             let res_bytes = encoder.encode(res);
 
-            if (body_bytes) {
+            if (body_bytes && method !== "HEAD") {
                 res_bytes = new Uint8Array([
                     ...res_bytes,
                     ...encoder.encode("\r\n"),
