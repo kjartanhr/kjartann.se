@@ -6,6 +6,7 @@ import { merge_req_params, parse_request, T_Http_Request } from "@/lib/http.ts";
 import not_found_handler from "@/routes/404.ts";
 import { generate_stack_page, Intentional_Any } from "@/lib/error.ts";
 import { safe_write } from "@/lib/tcp.ts";
+import { min_status_response } from "@/lib/html.ts";
 
 log.setup({
     handlers: {
@@ -97,10 +98,12 @@ const main = async (env: string | undefined) => {
                     await safe_write(
                         conn,
                         req.respond({
-                            status: 301,
+                            status: 308,
                             headers: {
+                                content_type: "text/html",
                                 location,
                             },
+                            body: min_status_response(308),
                         }),
                     );
 
@@ -113,7 +116,11 @@ const main = async (env: string | undefined) => {
                     if (env && env.toLowerCase() === "PRODUCTION") {
                         await safe_write(
                             conn,
-                            req.respond({ status: 500 }),
+                            req.respond({
+                                status: 500,
+                                headers: { content_type: "text/html" },
+                                body: min_status_response(500),
+                            }),
                         );
 
                         continue;

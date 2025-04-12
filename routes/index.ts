@@ -56,7 +56,8 @@ export default function handler(
 
     const default_response = req.respond({
         status: 308,
-        headers: { location: "/en" },
+        headers: { content_type: "text/html", location: "/en" },
+        body: min_status_response(308),
     });
 
     if (req.headers.accept_language) {
@@ -70,7 +71,11 @@ export default function handler(
         }
 
         if (first_language.language === "is") {
-            return req.respond({ status: 308, headers: { location: "/is" } });
+            return req.respond({
+                status: 308,
+                headers: { content_type: "text/html", location: "/is" },
+                body: min_status_response(308),
+            });
         }
     }
 
