@@ -181,11 +181,16 @@ window._namespace_kjartann_se = {
                 const a = anchors[i];
 
                 if (
-                    !a.href || !a.href.startsWith(site_base_url) ||
-                    a.href.split(".")[1]
+                    !a.href || !a.href.startsWith(site_base_url)
                 ) {
                     continue;
                 }
+
+                /* what does this thing do?? why did i put it here?? i'm fairly certain it just breaks all links
+                if (a.href.split(".")[1]) {
+                    continue;
+                }
+                */
 
                 a.addEventListener("click", handle_local_anchor_click);
             }
